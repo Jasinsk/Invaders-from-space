@@ -18,14 +18,11 @@ pygame.display.set_caption('WHEN ALIENS INVADE')
 class Ship():
 
     def __init__(self, screen_rect):
-
-        #self.image = pygame.image.load("spaceship.png")
         self.image = pygame.image.load("ship1.png")
         self.image = pygame.transform.scale(self.image, (50,50))
 
         self.rect = self.image.get_rect()
 
-        # put ship bottom, center x 
         self.rect.bottom = screen_rect.bottom 
         self.rect.centerx = screen_rect.centerx
 
@@ -41,8 +38,6 @@ class Ship():
 
     def event_handler(self, event):
 
-        #print "debug: Ship.event_handler"
-
         if event.type == KEYDOWN:
             if (event.key == K_LEFT or event.key == K_a):
                 self.move_x = -5
@@ -57,8 +52,6 @@ class Ship():
                 self.move_x = 0
 
     def update(self):
-
-        #print "debug: Ship.update: move_x", self.move_x
         self.rect.x += self.move_x
         if self.rect.x > 700:
             self.rect.x=700
@@ -72,6 +65,11 @@ class Ship():
             if not self.shots[i].is_alive:
                 print ("debug: Ship.update: removing bullet ", i)
                 del self.shots[i]
+
+
+#### Tu jest to co ma zmieniać statek zależnie od żyć
+
+
     def health_check(self):
         self.health+=-1
         if self.health==2:
@@ -253,8 +251,7 @@ class Enemy_2():
             self.rect.x +=1
         elif self.rect.y % 2==1:
             self.rect.x+=-1
-        #~ if self.rect.y < 0:
-            #~ self.is_alive = False
+
         if a==0:
             self.shots.append(Enemy_Bomb(self.rect.centerx, self.rect.centery))
         for s in self.shots:
@@ -270,7 +267,7 @@ class Enemy_2():
 #----------------------------------------------------------------------
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        pygame.sprite.Sprite.__init__(self)  
         self.image = pygame.image.load('sky.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
@@ -394,6 +391,13 @@ class Game():
                     self.screen.fill([255, 255, 255])
                     self.screen.blit(BackGround.image, BackGround.rect)
                     self.ship.draw(self.screen)
+        
+                    
+                    
+                    #A tutaj jest fragment ktory ma sobie radzić z trafieniami statku
+        
+        
+        
         
                     for e in self.enemies:
                         e.draw(self.screen)
