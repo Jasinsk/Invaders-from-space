@@ -193,8 +193,8 @@ class Enemy():
 
     def __init__(self, x, y):
 
-        self.image = pygame.image.load("ball3.png")
-        self.image = pygame.transform.scale(self.image, (15,15))
+        self.image = pygame.image.load("Enemy1.png")
+        self.image = pygame.transform.scale(self.image, (30,30))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
@@ -231,7 +231,7 @@ class Enemy_2():
 
     def __init__(self, x, y):
 
-        self.image = pygame.image.load("ball1.png")
+        self.image = pygame.image.load("Enemy2.png")
         self.image = pygame.transform.scale(self.image, (15,15))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
@@ -268,7 +268,7 @@ class Enemy_2():
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  
-        self.image = pygame.image.load('sky.png')
+        self.image = pygame.image.load('Background.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
