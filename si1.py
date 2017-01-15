@@ -5,19 +5,17 @@ Created on Fri Jan  6 21:06:50 2017
 @author: jasin
 """
 
-#-----!!!!SPACE INVADERS!!!!-----
-
 import pygame
 import random
 from pygame.locals import *
 
-pygame.display.set_caption('WHEN ALIENS INVADE')
+
 
 #----------------------------------------------------------------------
 
 class Ship():
 
-    def __init__(self, screen_rect):
+    def __init__(self, screen_rect,health):
         self.image = pygame.image.load("ship1.png")
         self.image = pygame.transform.scale(self.image, (50,50))
 
@@ -33,7 +31,7 @@ class Ship():
 
         self.max_shots = 5
         self.is_alive = True
-        self.health=3
+        self.health=health
     #--------------------
 
     def event_handler(self, event):
@@ -61,21 +59,20 @@ class Ship():
             s.update()
 
         for i in range(len(self.shots)-1, -1, -1):
-            print ("debug: Ship.update: testing bullet ", i)
             if not self.shots[i].is_alive:
-                print ("debug: Ship.update: removing bullet ", i)
                 del self.shots[i]
-
-
-#### Tu jest to co ma zmieniać statek zależnie od żyć
 
 
     def health_check(self):
         self.health+=-1
-        if self.health==2:
-            self.image==pygame.image.load("ship2.png")
-        if self.health==1:
-            self.image==pygame.image.load("ship3.png")
+        if self.health>7:
+            self.image=pygame.image.load("ship2.png")
+            self.image = pygame.transform.scale(self.image, (50,50))
+            pygame.display.update()
+        if self.health>0 and self.health<=7:
+            self.image=pygame.image.load("ship3.png")
+            self.image = pygame.transform.scale(self.image, (50,50))
+            pygame.display.update()
         if self.health==0:
             self.is_alive=False
 
@@ -103,8 +100,8 @@ class Bullet():
 
     def __init__(self, x, y):
 
-        self.image = pygame.image.load("ball2.png")
-        self.image = pygame.transform.scale(self.image, (5,15))
+        self.image = pygame.image.load("ball3.png")
+        self.image = pygame.transform.scale(self.image, (5,20))
 
         self.rect = self.image.get_rect()
         self.rect.centerx = x
@@ -120,6 +117,7 @@ class Bullet():
 
         if self.rect.y < 0:
             self.is_alive = False
+        
 
     #--------------------
 
@@ -135,7 +133,7 @@ class Enemy_Bullet():
     def __init__(self, x, y):
 
         self.image = pygame.image.load("ball1.png")
-        self.image = pygame.transform.scale(self.image, (5,15))
+        self.image = pygame.transform.scale(self.image, (5,20))
 
         self.rect = self.image.get_rect()
         self.rect.centerx = x
@@ -147,7 +145,7 @@ class Enemy_Bullet():
 
     def update(self):
 
-        self.rect.y += 7
+        self.rect.y += 9
 
         if self.rect.y > -800:
             self.is_alive = False
@@ -204,7 +202,7 @@ class Enemy():
     #--------------------
 
     def update(self):
-        a=random.randint(0,800)
+        a=random.randint(0,400)
         if self.rect.x==750 and self.rect.y % 2==0:
             self.rect.y += 75
         elif self.rect.x==50 and self.rect.y % 2==1:
@@ -216,6 +214,7 @@ class Enemy():
             
         if a==0:
             self.shots.append(Enemy_Bullet(self.rect.centerx, self.rect.centery))
+            
         for s in self.shots:
             s.update()
     #--------------------
@@ -232,7 +231,7 @@ class Enemy_2():
     def __init__(self, x, y):
 
         self.image = pygame.image.load("Enemy2.png")
-        self.image = pygame.transform.scale(self.image, (15,15))
+        self.image = pygame.transform.scale(self.image, (30,30))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
@@ -242,7 +241,7 @@ class Enemy_2():
     #--------------------
 
     def update(self):
-        a=random.randint(0,400)
+        a=random.randint(0,200)
         if self.rect.x==750 and self.rect.y % 2==0:
             self.rect.y += 75
         elif self.rect.x==50 and self.rect.y % 2==1:
@@ -268,36 +267,91 @@ class Enemy_2():
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  
-        self.image = pygame.image.load('Background.png')
+        self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
+
 
 #----------------------------------------------------------------------
 class Game():
 
-    def __init__(self):
+    def __init__(self,level,health):
 
         pygame.init()
 
         w, h = 800, 700
         self.screen = pygame.display.set_mode((w,h))
+        pygame.display.set_caption('INVADERS FROM ANOTHER DIMENSION')
 
         pygame.mouse.set_visible(False)
-
-        self.ship = Ship(self.screen.get_rect())
-
+        self.health=health
+        self.ship = Ship(self.screen.get_rect(),health)
+        self.level=level
         self.enemies = []
-
-        for i in range(100, 800, 100):
-            self.enemies.append(Enemy(i, 100))
-            self.enemies.append(Enemy(i, 175))
-            self.enemies.append(Enemy(i, 250))
+        
+        if level==1:
+            for i in range(100, 800, 200):
+                self.enemies.append(Enemy(i, 100))
+                self.enemies.append(Enemy(i, 175))
+                self.enemies.append(Enemy(i, 250))
+            for i in range(200, 800, 200):
+                self.enemies.append(Enemy_2(i, 100))
+                self.enemies.append(Enemy_2(i, 175))
+                self.enemies.append(Enemy_2(i, 250))   
+        if level==2:
+            for i in range(100, 800, 200):
+                self.enemies.append(Enemy(i, 100))
+                self.enemies.append(Enemy(i, 175))
+                self.enemies.append(Enemy(i, 250))
+                self.enemies.append(Enemy(i, 325))
+            for i in range(200, 800, 200):
+                self.enemies.append(Enemy_2(i, 100))
+                self.enemies.append(Enemy_2(i, 175))
+                self.enemies.append(Enemy_2(i, 250)) 
+                self.enemies.append(Enemy_2(i, 325))
+        if level==3:
+            for i in range(100, 800, 200):
+                self.enemies.append(Enemy(i, 100))
+                self.enemies.append(Enemy(i, 135))
+                self.enemies.append(Enemy(i, 170))
+                self.enemies.append(Enemy(i, 205))
+                self.enemies.append(Enemy(i, 240))
+            for i in range(200, 800, 200):
+                self.enemies.append(Enemy_2(i, 100))
+                self.enemies.append(Enemy_2(i, 135))
+                self.enemies.append(Enemy_2(i, 170))
+                self.enemies.append(Enemy_2(i, 205))
+                self.enemies.append(Enemy_2(i, 240))
+        if level==4:
+            for i in range(100, 800, 100):
+                self.enemies.append(Enemy(i, 100))
+                self.enemies.append(Enemy(i, 175))
+                self.enemies.append(Enemy(i, 250))
+                self.enemies.append(Enemy(i, 325))
+            for i in range(150, 800, 100):
+                self.enemies.append(Enemy_2(i, 100))
+                self.enemies.append(Enemy_2(i, 175))
+                self.enemies.append(Enemy_2(i, 250)) 
+                self.enemies.append(Enemy_2(i, 325))
+        if level==5:
+            for i in range(100, 800, 100):
+                self.enemies.append(Enemy(i, 100))
+                self.enemies.append(Enemy(i, 135))
+                self.enemies.append(Enemy(i, 170))
+                self.enemies.append(Enemy(i, 205))
+                self.enemies.append(Enemy(i, 240))
+            for i in range(150, 800, 100):
+                self.enemies.append(Enemy_2(i, 100))
+                self.enemies.append(Enemy_2(i, 135))
+                self.enemies.append(Enemy_2(i, 170))
+                self.enemies.append(Enemy_2(i, 205))
+                self.enemies.append(Enemy_2(i, 240))
 
         font = pygame.font.SysFont("", 72)
         self.text_paused = font.render("PAUSED", True, (255, 0, 0))
         self.text_paused_rect = self.text_paused.get_rect(center=self.screen.get_rect().center)
         
-        self.text_intro = font.render("INVADERS FROM SPACE", True, (0, 255, 255))
+        self.text_intro = font.render("Wave %d" % level, True, (0, 255, 255))
         self.text_intro_rect = self.text_intro.get_rect(center=self.screen.get_rect().center)
         
         self.text_end = font.render("You Dead", True, (255, 0, 255))
@@ -306,7 +360,7 @@ class Game():
         self.text_win = font.render("You WIN", True, (255, 255, 0))
         self.text_win_rect = self.text_end.get_rect(center=self.screen.get_rect().center)
 
-    #-----MAIN GAME LOOP-----
+    #-----MAIN GAME-----
 
     def run(self):
 
@@ -316,12 +370,30 @@ class Game():
         RUNNING = True
         PAUSED = False
         counter=0
-        BackGround = Background('sky.png', [0,0])
+        BackGround = Background('Background.png', [0,0])
+        Back_intro = Background('Start.png',[0,0])
+        Back_win = Background('Win_card.png',[0,0])
+        Back_end = Background('End_card.png',[0,0])
         while RUNNING:
 
             clock.tick(30)
             
-            if INTRO:
+            if INTRO and self.level==1:
+                
+                self.screen.fill([255, 255, 255])
+                self.screen.blit(Back_intro.image, Back_intro.rect)
+                
+                for event in pygame.event.get():
+                    if event.type == KEYDOWN:
+                        if event.key == K_SPACE:
+                            INTRO = not INTRO
+                        if event.key == K_ESCAPE:
+                            RUNNING = False
+                            break
+                pygame.display.update()
+                        
+            elif INTRO and self.level>1:
+                self.screen.fill([100, 0, 0])
                 self.screen.blit(self.text_intro, self.text_intro_rect)
                 for event in pygame.event.get():
                     if event.type == KEYDOWN:
@@ -330,19 +402,20 @@ class Game():
                         if event.key == K_ESCAPE:
                             RUNNING = False
                             break
-                self.screen.blit(self.text_intro, self.text_intro_rect)
                 pygame.display.update()
-            #--- events ---
+                
             elif self.ship.is_alive==True:
                 if len(self.enemies)==0:
-                    self.screen.blit(self.text_win, self.text_win_rect)
+                    if self.level==5:
+                        self.screen.fill([255, 255, 255])
+                        self.screen.blit(Back_win.image, Back_win.rect)
+                    else:
+                        Game(self.level+1,self.health).run()
                     for event in pygame.event.get():
                        if event.type == KEYDOWN:
                            if event.key == K_ESCAPE:
                                RUNNING = False
                                break
-                           if event.key == K_SPACE:
-                               Game().run()
                 else:
                     for event in pygame.event.get():
                         
@@ -369,7 +442,6 @@ class Game():
                             counter=0
                     counter +=1
                             
-                    #--- changes ---
                     if not PAUSED:
         
                         self.ship.update()
@@ -380,38 +452,29 @@ class Game():
                         self.ship.bullet_detect_collison(self.enemies)
                         
                         for i in range(len(self.enemies)-1, -1, -1):
-                            print ("debug: Ship.update: testing bullet ", i)
                             if not self.enemies[i].is_alive:
-                                print ("debug: Ship.update: removing bullet ", i)
                                 del self.enemies[i]
                         if not self.ship.is_alive:
                             del self.ship
-                    #--- draws ---
         
                     self.screen.fill([255, 255, 255])
                     self.screen.blit(BackGround.image, BackGround.rect)
                     self.ship.draw(self.screen)
         
-                    
-                    
-                    #A tutaj jest fragment ktory ma sobie radzić z trafieniami statku
-        
-        
-        
-        
+   
                     for e in self.enemies:
                         e.draw(self.screen)
                         for b in e.shots:
                             if pygame.sprite.collide_circle(b, self.ship):
                                 self.ship.health_check()
-                                b.is_alive=False
-                                del b
+                                self.health+= -1
                     if PAUSED:
                         self.screen.blit(self.text_paused, self.text_paused_rect)
                         
                     pygame.display.update()
             else:
-               self.screen.blit(self.text_end, self.text_end_rect)
+               self.screen.fill([255, 255, 255])
+               self.screen.blit(Back_end.image, Back_end.rect)
                for event in pygame.event.get():
                    if event.type == KEYDOWN:
                        if event.key == K_ESCAPE:
@@ -422,9 +485,8 @@ class Game():
                            self.ship.health==3
             pygame.display.update() 
               
-        #--- quit ---
 
         pygame.quit()
 
 #---------------------------------------------------------------------
-Game().run()
+Game(1,25).run()
