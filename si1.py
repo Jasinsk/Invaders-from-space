@@ -202,7 +202,7 @@ class Enemy():
     #--------------------
 
     def update(self):
-        a=random.randint(0,400)
+        a=random.randint(0,200)
         if self.rect.x==750 and self.rect.y % 2==0:
             self.rect.y += 75
         elif self.rect.x==50 and self.rect.y % 2==1:
@@ -385,7 +385,7 @@ class Game():
                 
                 for event in pygame.event.get():
                     if event.type == KEYDOWN:
-                        if event.key == K_SPACE:
+                        if event.key == K_SPACE or event.key == K_UP:
                             INTRO = not INTRO
                         if event.key == K_ESCAPE:
                             RUNNING = False
@@ -397,7 +397,7 @@ class Game():
                 self.screen.blit(self.text_intro, self.text_intro_rect)
                 for event in pygame.event.get():
                     if event.type == KEYDOWN:
-                        if event.key == K_SPACE:
+                        if event.key == K_SPACE or event.key == K_UP:
                             INTRO = not INTRO
                         if event.key == K_ESCAPE:
                             RUNNING = False
