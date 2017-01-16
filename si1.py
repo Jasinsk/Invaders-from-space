@@ -409,6 +409,13 @@ class Game():
                     if self.level==5:
                         self.screen.fill([255, 255, 255])
                         self.screen.blit(Back_win.image, Back_win.rect)
+                        for event in pygame.event.get():
+                            if event.type == KEYDOWN:
+                                if event.key == K_SPACE or event.key == K_UP:
+                                    Game(1,25).run()
+                                    if event.key == K_ESCAPE:
+                                        RUNNING = False
+                                        break
                     else:
                         Game(self.level+1,self.health).run()
                     for event in pygame.event.get():
